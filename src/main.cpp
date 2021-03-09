@@ -1,18 +1,75 @@
 #include <iostream>
-#include "helper/helper.hpp"
-#include "test/test.hpp"
-
 #include <string>
 #include <vector>
 #include <list>
 #include <functional>
 #include <map>
+#include <cstdlib>
+#include <cmath>
+#include <algorithm>
+
+#include "helper/helper.hpp"
+#include "test/test.hpp"
+#include "alg/alg.hpp"
 
 using namespace std;
 
+////////////////////////////////////////////////////////////////////////////////
+// run_test
+////////////////////////////////////////////////////////////////////////////////
 void run_test()
 {
   test::out_container();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// run_search
+////////////////////////////////////////////////////////////////////////////////
+void run_search()
+{
+  const int limit_value = 50;
+  vector<int> v(10, 0);
+
+  // linear search
+  cout << "====================" << endl;
+  for (int i = 0; i < 10; ++i)
+  {
+    for (int j = 0; j < 10; ++j)
+    {
+      v[j] = rand() % limit_value;
+    }
+    auto temp = alg::to_shuffle(v);
+
+    int value = rand() % limit_value;
+    cout << temp << endl;
+    int pos = alg::search_linear(temp, value);
+    if (pos == -1)
+      cout << "  => " << value << " is not exist in array." << endl;
+    else
+      cout << "  => " << value << " is located at " << pos << endl;
+  }
+
+  // binary search
+  cout << "====================" << endl;
+  for (int i = 0; i < 10; ++i)
+  {
+    // prepare random value array whose size is 10.
+    for (int j = 0; j < 10; ++j)
+    {
+      v[j] = rand() % limit_value;
+    }
+
+    // sort
+    sort(v.begin(), v.end());
+
+    int value = rand() % limit_value;
+    cout << v << endl;
+    int pos = alg::search_binary(v, value);
+    if (pos == -1)
+      cout << "  => " << value << " is not exist in array." << endl;
+    else
+      cout << "  => " << value << " is located at " << pos << endl;
+  }
 }
 
 namespace ec
@@ -26,6 +83,13 @@ enum error_code : int
 
 int main()
 {
+  srand((unsigned int)time(nullptr));
+
+  // TODO: implement command hierarchy
+  //
+  // base commands
+  //  + sub commands
+  //  + sub commands
   using command_type = pair<string, function<int()>>;
   map<string, function<int()>> commands;
 
@@ -52,6 +116,11 @@ int main()
       run_test();
       return ec::no_error;
     }));
+  commands.insert(make_pair(
+    "search", [](){
+      run_search();
+      return ec::no_error;
+    }));
 
   string input;
   int ret = ec::no_error;
@@ -59,7 +128,7 @@ int main()
     cout << "> ";
     getline(cin, input);
 
-    trim(input);
+    helper::trim(input);
 
     if (input.empty()) continue;
 
@@ -74,7 +143,6 @@ int main()
     ret = command->second();
 
   } while (ret == ec::no_error);
-
 
   cout << "press enter to exit...";
   cin.get();

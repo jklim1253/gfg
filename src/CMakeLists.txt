@@ -8,6 +8,7 @@ set(FILE_HEADERS
 
 add_subdirectory(helper)
 add_subdirectory(test)
+add_subdirectory(alg)
 
 add_executable(${CMAKE_PROJECT_NAME}
   ${FILE_SOURCES}
@@ -15,3 +16,4 @@ add_executable(${CMAKE_PROJECT_NAME}
 )
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE helper)
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE test)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE alg)
